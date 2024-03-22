@@ -1,0 +1,21 @@
+{
+    "name": "mager19/blockinventory",
+    "autoload": {
+        "psr-4": {
+            "Mager19\\Blockinventory\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mario Germán Reyes C",
+            "email": "mager19@gmail.com"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        }
+    },
+    "require": {
+    }
+}
