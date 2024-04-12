@@ -7,14 +7,14 @@ namespace Composer\Autoload;
 class ComposerStaticInit77d449ed729d8c3b175d42b24b5f3f3a
 {
     public static $prefixLengthsPsr4 = array (
-        'M' => 
+        'C' => 
         array (
-            'Mager19\\Blockinventory\\' => 23,
+            'Commvault\\Blockinventory\\' => 25,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Mager19\\Blockinventory\\' => 
+        'Commvault\\Blockinventory\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),

@@ -1,14 +1,13 @@
 {
-    "name": "mager19/blockinventory",
+    "name": "commvaul/blockinventory",
     "autoload": {
         "psr-4": {
-            "Mager19\\Blockinventory\\": "src/"
+            "Commvault\\Blockinventory\\": "src/"
         }
     },
     "authors": [
         {
-            "name": "Mario Germán Reyes C",
-            "email": "mager19@gmail.com"
+            "name": "40q.agency"
         }
     ],
     "config": {

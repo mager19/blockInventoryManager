@@ -1,43 +1,60 @@
 <?php
 
-namespace Mager19\Blockinventory\models;
+namespace Commvault\Blockinventory\models;
 
 class SearchBlock
 {
 
     public function search_block_in_content($block_to_find)
     {
+        global $wpdb;
+
+        if(!$wpdb) {
+            return [];
+        }
+
         $results = [];
-        $pages = get_pages();
-        // // Obtener todos los custom post types
         $custom_post_types = get_post_types(["_builtin" => false]);
-        // Agregar el tipo de publicación 'post' a la lista de custom post types
         $custom_post_types[] = "post";
-        // Iterar sobre todas las páginas y publicaciones
-        foreach ($pages as $page) {
-            $content = $page->post_content;
-            if ($this->block_is_present($content, $block_to_find)) {
-                $results[] = "El bloque $block_to_find está presente en la página: " . $page->post_title;
+        $post_types_str = "'" . implode("', '", $custom_post_types) . "'";
+
+        $page_query = $wpdb->prepare(
+            "SELECT ID, post_title, post_content, 'page' AS post_type FROM {$wpdb->posts} WHERE post_type = 'page' AND post_content LIKE %s",
+            '%' . $wpdb->esc_like($block_to_find) . '%'
+        );
+        
+        $post_query = $wpdb->prepare(
+            "SELECT ID, post_title, post_type, post_content FROM {$wpdb->posts} WHERE post_type IN ($post_types_str) AND post_status = 'publish' AND post_content LIKE %s",
+            '%' . $wpdb->esc_like($block_to_find) . '%'
+        );
+        
+        // Unir ambas consultas
+        $combined_query = "($page_query) UNION ($post_query)";
+        
+        $combined_results = $wpdb->get_results($combined_query);
+        
+        foreach ($combined_results as $result) {
+            if ($result->post_type === 'page') {
+                $post_type = 'page';
+            } else {
+                $post_type = get_post_type($result->ID);
             }
+            
+            $permalink = get_permalink($result->ID);
+            
+            $results[] = [
+                'ID' => $result->ID,
+                'permalink' => $permalink,
+                'title' => $result->post_title,
+                'post_type' => $post_type
+            ];
         }
-        foreach ($custom_post_types as $post_type) {
-            $posts = get_posts(
-                [
-                "post_type" => $post_type,
-                "posts_per_page" => -1,
-                ]
-            );
-            foreach ($posts as $post) {
-                $content = $post->post_content;
-                if ($this->block_is_present($content, $block_to_find)) {
-                    $results[] = "El bloque $block_to_find está presente en el $post_type: " . $post->post_title;
-                }
-            }
-        }
+
         return $results;
     }
 
-    // Función para verificar si un bloque está presente en el contenido
+
+    // Function to check if a block is present in the content 
     static function block_is_present($content, $block_to_find)
     {
         $blocks = parse_blocks($content);

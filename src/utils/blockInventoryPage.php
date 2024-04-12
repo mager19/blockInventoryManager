@@ -1,8 +1,7 @@
 <?php 
 
-namespace Mager19\Blockinventory\utils;
+namespace Commvault\Blockinventory\utils;
 
-use Mager19\Blockinventory\utils;
 
 class BlockInventoryPage
 {
@@ -20,8 +19,6 @@ class BlockInventoryPage
         $subpage = new BlockInventorySubPage();
     }
 }
-
-
 
 
 

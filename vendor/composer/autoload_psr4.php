@@ -6,5 +6,5 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Mager19\\Blockinventory\\' => array($baseDir . '/src'),
+    'Commvault\\Blockinventory\\' => array($baseDir . '/src'),
 );
