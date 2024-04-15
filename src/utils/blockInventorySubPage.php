@@ -48,7 +48,7 @@ class BlockInventorySubPage
                         <th scope="row">Transient Expiration:</th>
                         <td>
                             <select name="transient_expiration"> 
-                                <option value="<?php echo MINUTE_IN_SECONDS; ?>" <?php selected( get_option( 'transient_expiration' ), MINUTE_IN_SECONDS ); ?>>1 Minute</option>
+                                <option selected="selected" value="<?php echo MINUTE_IN_SECONDS; ?>" <?php selected( get_option( 'transient_expiration' ), MINUTE_IN_SECONDS ); ?>>1 Minute</option>
                                 <option value="<?php echo HOUR_IN_SECONDS; ?>" <?php selected( get_option( 'transient_expiration' ), HOUR_IN_SECONDS ); ?>>1 Hour</option>
                                 <option value="<?php echo DAY_IN_SECONDS; ?>" <?php selected( get_option( 'transient_expiration' ), DAY_IN_SECONDS ); ?>>1 Day</option>
                             </select>
@@ -137,8 +137,12 @@ class BlockInventorySubPage
                         }
                     }
                     
+                    if(get_option('transient_expiration') !== false){
+                        $transient_expiration = get_option('transient_expiration');
+                    }else{
+                        $transient_expiration =  MINUTE_IN_SECONDS;
+                    }
 
-                    $transient_expiration = intval( get_option('transient_expiration') ) ?? MINUTE_IN_SECONDS;
                     //Save the transient
                     set_transient('blockInventory', $filtered_results, $transient_expiration);
                 }                
