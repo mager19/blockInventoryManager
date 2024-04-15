@@ -1,6 +1,6 @@
 <?php
 
-namespace Commvault\Blockinventory\models;
+namespace Plugins40Q\Blockinventory\models;
 
 class SearchBlock
 {

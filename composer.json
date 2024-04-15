@@ -1,20 +1,19 @@
 {
-    "name": "commvaul/blockinventory",
-    "autoload": {
-        "psr-4": {
-            "Commvault\\Blockinventory\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "40q.agency"
-        }
-    ],
-    "config": {
-        "allow-plugins": {
-            "composer/installers": true
-        }
-    },
-    "require": {
-    }
+	"name": "commvaul/blockinventory",
+	"autoload": {
+		"psr-4": {
+			"Plugins40Q\\Blockinventory\\": "src/"
+		}
+	},
+	"authors": [
+		{
+			"name": "Plugins40Q.agency"
+		}
+	],
+	"config": {
+		"allow-plugins": {
+			"composer/installers": true
+		}
+	},
+	"require": {}
 }
