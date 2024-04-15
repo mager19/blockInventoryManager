@@ -138,7 +138,7 @@ class BlockInventorySubPage
                     }
                     
 
-                    $transient_expiration = intval( get_option('transient_expiration') );
+                    $transient_expiration = intval( get_option('transient_expiration') ) ?? MINUTE_IN_SECONDS;
                     //Save the transient
                     set_transient('blockInventory', $filtered_results, $transient_expiration);
                 }                
