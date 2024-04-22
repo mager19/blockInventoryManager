@@ -14,6 +14,8 @@ class ShowResults {
                         <th>Post Type</th>
                         <th>ID</th>
                         <th>Title</th>
+                        <th>Post Status</th>
+                        <th>Author</th>
             HTML;
 
             echo $type === 'allContent' ? '<th>Link</th>' : '<th>Blocks</th>';
@@ -27,6 +29,8 @@ class ShowResults {
                 echo '<td>' . $result['post_type'] . '</td>';
                 echo '<td>' . $result['ID'] . '</td>';
                 echo '<td><strong>' . $result['title'] . '</strong></td>';
+                echo '<td>' . $result['post_status'] . '</td>';
+                echo '<td>' . $result['post_author'] . '</td>';
 
                 echo $type === 'allContent' ? '<td><a href="' . $result['permalink'] . '" target="_blank">View</a></td>' : '<td>' . $result['blocks'] . '</td>';
 

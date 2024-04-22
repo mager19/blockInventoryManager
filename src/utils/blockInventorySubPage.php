@@ -4,6 +4,7 @@ namespace Agency40Q\Blockinventory\utils;
 
 use Agency40Q\Blockinventory\models\SearchBlock;
 use Agency40Q\Blockinventory\models\ShowResults;
+use Agency40Q\Blockinventory\utils\blockInventorySettings;
 
 class BlockInventorySubPage
 {   
@@ -11,17 +12,23 @@ class BlockInventorySubPage
 
     public function __construct()
     {   
-        $menu_slug = 'blockinventory-options';
-        add_submenu_page($menu_slug, 'Blockinventory', 'Pages', 'read', $menu_slug, array($this, 'render_block_inventory_page'));
-
-        add_submenu_page($menu_slug, 'Extra Options', 'Search Blocks', 'read', 'extraOptions', array($this, 'extraOptionsCallback'));
-
-        add_submenu_page( $menu_slug, 'Block Inventory Settings', 'Settings', 'manage_options', 'blockinventory_settings', array($this,'blockInventory_admin_options') ); 
-        
-        add_action( 'admin_init', array($this,'blockInventorySettings') );
+        $blockInventorySettings = new blockInventorySettings();
+        $blockInventorySettings::registerSetting('block_prefix');
+        $blockInventorySettings::registerSetting('transient_expiration');
 
         $this->block_prefix = get_option('block_prefix');
+        $menu_slug = 'blockinventory-options';
+        
+        // Page Block Inventory
+        add_submenu_page($menu_slug, 'Blockinventory', 'Pages', 'read', $menu_slug, array($this, 'render_block_inventory_page'));
 
+        //Page Search Blocks
+        add_submenu_page($menu_slug, 'Extra Options', 'Search Blocks', 'read', 'extraOptions', array($this, 'extraOptionsCallback'));
+
+        // Page settings
+        add_submenu_page( $menu_slug, 'Block Inventory Settings', 'Settings', 'manage_options', 'blockinventory_settings', array($this,'blockInventory_admin_options') ); 
+
+        // Delete transient when the settings are updated
         add_action('update_option_transient_expiration', function($old_value, $value) {
             if ($old_value !== $value) {
                 delete_transient('blockInventory');
@@ -29,29 +36,21 @@ class BlockInventorySubPage
         }, 10, 2);
     }
 
-    public function blockInventorySettings() {
-        //register our settings
-        register_setting( 'blockinventory-plugin-settings-group', 'block_prefix' );
-        register_setting( 'blockinventory-plugin-settings-group', 'transient_expiration' );
-    }
-
     public function blockInventory_admin_options(){
         ?>
-            <h1>Settings</h1>
+            <h1><?php echo esc_html__( 'Settings', 'Blockinventory' ); ?></h1>
             <form method="post" action="options.php">
                 <?php settings_fields( 'blockinventory-plugin-settings-group' ); ?>
-                <?php ?>
+                <?php do_settings_sections( 'blockinventory-plugin-settings-group' ); ?>
                 <table class="form-table">
                     <tr valign="top">
-                        <th scope="row">Block prefix:</th>
-                            <td><input type="text" name="block_prefix" value="<?php echo get_option( 'block_prefix' ); ?>"/></td>
-                        
+                        <th scope="row"><?php echo esc_html__( 'Block prefix:', 'Blockinventory' ); ?></th>
+                        <td><input type="text" name="block_prefix" value="<?php echo esc_attr( get_option( 'block_prefix' ) ); ?>"/></td>             
                     </tr>
                     <tr valign="top">
-                    <span><i>if no value is assigned, the default value "core/" will be used</i></span>
-
+                    <span><i><?php echo esc_html__( 'if no value is assigned, the default value "core/" will be used', 'Blockinventory' ); ?></i></span>
                     <tr valign="top">
-                        <th scope="row">Transient Expiration:</th>
+                        <th scope="row"><?php echo esc_html__( 'Transient Expiration:', 'Blockinventory' ); ?></th>
                         <td>
                             <select name="transient_expiration"> 
                                 <option selected="selected" value="<?php echo MINUTE_IN_SECONDS; ?>" <?php selected( get_option( 'transient_expiration' ), MINUTE_IN_SECONDS ); ?>>1 Minute</option>
@@ -62,10 +61,9 @@ class BlockInventorySubPage
                             </select>
                         </td>
                     </tr>
-                    
                 </table>
-            <?php submit_button(); ?>
-            </form>        
+                <?php submit_button(); ?>
+            </form>       
         <?php 
     } 
 
@@ -75,8 +73,8 @@ class BlockInventorySubPage
 
         ?>
         <div class="wrap">
-            <h1>Block Inventory Pages</h1>
-            <p>The following table shows the pages, posts and cpts in which the prefix defined in settings has been used, if you have not done so it will show the default native blocks (core/blocks) and the other blocks on the site.</p>
+            <h1><?php echo esc_html__( 'Block Inventory Pages', 'Blockinventory' ); ?> </h1>
+            <p><?php echo esc_html__( 'The following table shows the pages, posts and cpts in which the prefix defined in settings has been used, if you have not done so it will show the default native blocks (core/blocks) and the other blocks on the site.', 'Blockinventory' );  ?>  </p>
             <?php 
                 global $wpdb;
 
@@ -92,7 +90,7 @@ class BlockInventorySubPage
 
                     // query SQL 
                     $query = "
-                        SELECT ID, post_title, post_content, post_type
+                        SELECT ID, post_title, post_content, post_type, post_status, post_author
                         FROM {$wpdb->posts}
                         WHERE post_type IN ($post_types_str)
                     ";
@@ -123,7 +121,9 @@ class BlockInventorySubPage
                             $pages_with_blocks[$result->ID] = array(
                                 'title' => $result->post_title,
                                 'blocks' => $page_blocks,
-                                'post_type' => $result->post_type
+                                'post_type' => $result->post_type,
+                                'post_status' => $result->post_status,
+                                'post_author' => get_the_author_meta('display_name', $result->post_author)
                             );
                         }
                     }
@@ -140,6 +140,8 @@ class BlockInventorySubPage
                                 'ID' => $page_id,
                                 'title' => $page_data['title'],
                                 'post_type' => $page_data['post_type'],
+                                'post_status' => $page_data['post_status'],
+                                'post_author' => $page_data['post_author'],
                                 'blocks' => implode(', ', $filtered_blocks)
                             );
                         }
@@ -171,8 +173,8 @@ class BlockInventorySubPage
         ?>
         <div class="wrap">
 
-            <h1>Block Inventory</h1>
-            <p>Select a block and get the information of all the pages/cpt where it was used.</p>
+            <h1><?php echo esc_html__( 'Block Inventory', 'Blockinventory' ); ?></h1>
+            <p><?php echo esc_html__( 'Select a block and get the information of all the pages/cpt where it was used.', 'Blockinventory' ); ?></p>
 
             <?php 
                 $blocks = \WP_Block_Type_Registry::get_instance()->get_all_registered();
@@ -186,7 +188,7 @@ class BlockInventorySubPage
             
             <form method="POST" action="" >
                 <select name="blocks" id="blocksid">
-                    <option selected disabled>Select a Block </option>
+                    <option selected disabled><?php echo esc_html__( 'Select a Block', 'Blockinventory' ); ?> </option>
                     <?php
                     foreach ($filtered_blocks as $block) {
                         echo '<option value="' . esc_attr($block->name) . '">' . esc_html($block->title) . '</option>';
@@ -199,7 +201,9 @@ class BlockInventorySubPage
             <?php 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-                $selected_block = $_POST['blocks']; ?>
+                $selected_block = isset($_POST['blocks']) ? $_POST['blocks'] : null;
+                
+                ?>
 
                 <h2><?php echo $selected_block; ?></h2>
                 <?php 
@@ -209,8 +213,8 @@ class BlockInventorySubPage
                     $showResults = $ui->createTable($results);
                 
                     echo $showResults;
-                }else {
-                    echo "Not was found the block $selected_block in any page or cpt";                
+                }else {   
+                    echo esc_html__( "Not was found the block $selected_block in any page or cpt", 'Blockinventory' );            
                 }
             }
             ?>            
