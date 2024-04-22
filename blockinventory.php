@@ -33,12 +33,11 @@ if(!class_exists('BlockInventory')) {
 
         public function init()
         {            
-            $blockInventoryPage = new BlockInventoryPage();
+            new BlockInventoryPage();
         }      
     }
 }
 
-
-$blockInventory = new BlockInventory;
+new BlockInventory();
 
 ?>

@@ -19,12 +19,12 @@ class SearchBlock
         $post_types_str = "'" . implode("', '", $custom_post_types) . "'";
 
         $page_query = $wpdb->prepare(
-            "SELECT ID, post_title, post_content, 'page' AS post_type FROM {$wpdb->posts} WHERE post_type = 'page' AND post_content LIKE %s",
+            "SELECT ID, post_title, post_content, post_status, post_author, 'page' AS post_type FROM {$wpdb->posts} WHERE post_type = 'page' AND post_content LIKE %s",
             '%' . $wpdb->esc_like($block_to_find) . '%'
         );
         
         $post_query = $wpdb->prepare(
-            "SELECT ID, post_title, post_type, post_content FROM {$wpdb->posts} WHERE post_type IN ($post_types_str) AND post_status = 'publish' AND post_content LIKE %s",
+            "SELECT ID, post_title, post_type, post_status, post_author, post_content FROM {$wpdb->posts} WHERE post_type IN ($post_types_str) AND post_status = 'publish' AND post_content LIKE %s",
             '%' . $wpdb->esc_like($block_to_find) . '%'
         );
         
@@ -46,7 +46,9 @@ class SearchBlock
                 'ID' => $result->ID,
                 'permalink' => $permalink,
                 'title' => $result->post_title,
-                'post_type' => $post_type
+                'post_type' => $post_type,
+                'post_status' => $result->post_status,
+                'post_author' => get_the_author_meta('display_name', $result->post_author)
             ];
         }
 
