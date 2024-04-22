@@ -1,9 +1,9 @@
 <?php 
 
-namespace Plugins40Q\Blockinventory\utils;
+namespace Agency40Q\Blockinventory\utils;
 
-use Plugins40Q\Blockinventory\models\SearchBlock;
-use Plugins40Q\Blockinventory\models\ShowResults;
+use Agency40Q\Blockinventory\models\SearchBlock;
+use Agency40Q\Blockinventory\models\ShowResults;
 
 class BlockInventorySubPage
 {   
@@ -12,7 +12,7 @@ class BlockInventorySubPage
     public function __construct()
     {   
         $menu_slug = 'blockinventory-options';
-        add_submenu_page($menu_slug, 'Blockinventory', 'Pages - Cpts', 'read', $menu_slug, array($this, 'render_block_inventory_page'));
+        add_submenu_page($menu_slug, 'Blockinventory', 'Pages', 'read', $menu_slug, array($this, 'render_block_inventory_page'));
 
         add_submenu_page($menu_slug, 'Extra Options', 'Search Blocks', 'read', 'extraOptions', array($this, 'extraOptionsCallback'));
 
@@ -21,6 +21,12 @@ class BlockInventorySubPage
         add_action( 'admin_init', array($this,'blockInventorySettings') );
 
         $this->block_prefix = get_option('block_prefix');
+
+        add_action('update_option_transient_expiration', function($old_value, $value) {
+            if ($old_value !== $value) {
+                delete_transient('blockInventory');
+            }
+        }, 10, 2);
     }
 
     public function blockInventorySettings() {
@@ -34,7 +40,7 @@ class BlockInventorySubPage
             <h1>Settings</h1>
             <form method="post" action="options.php">
                 <?php settings_fields( 'blockinventory-plugin-settings-group' ); ?>
-                <?php do_settings_sections( 'blockinventory-plugin-settings-group' ); ?>
+                <?php ?>
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row">Block prefix:</th>
@@ -49,7 +55,9 @@ class BlockInventorySubPage
                         <td>
                             <select name="transient_expiration"> 
                                 <option selected="selected" value="<?php echo MINUTE_IN_SECONDS; ?>" <?php selected( get_option( 'transient_expiration' ), MINUTE_IN_SECONDS ); ?>>1 Minute</option>
+                                <option value="<?php echo MINUTE_IN_SECONDS*5; ?>" <?php selected( get_option( 'transient_expiration' ), MINUTE_IN_SECONDS*5 ); ?>>5 Minutes</option>
                                 <option value="<?php echo HOUR_IN_SECONDS; ?>" <?php selected( get_option( 'transient_expiration' ), HOUR_IN_SECONDS ); ?>>1 Hour</option>
+                                <option value="<?php echo HOUR_IN_SECONDS*6; ?>" <?php selected( get_option( 'transient_expiration' ), HOUR_IN_SECONDS*6 ); ?>>6 Hours</option>
                                 <option value="<?php echo DAY_IN_SECONDS; ?>" <?php selected( get_option( 'transient_expiration' ), DAY_IN_SECONDS ); ?>>1 Day</option>
                             </select>
                         </td>
@@ -67,7 +75,7 @@ class BlockInventorySubPage
 
         ?>
         <div class="wrap">
-            <h1>Block Inventory Pages - Cpts</h1>
+            <h1>Block Inventory Pages</h1>
             <p>The following table shows the pages, posts and cpts in which the prefix defined in settings has been used, if you have not done so it will show the default native blocks (core/blocks) and the other blocks on the site.</p>
             <?php 
                 global $wpdb;
@@ -96,16 +104,16 @@ class BlockInventorySubPage
                     foreach ($results as $result) {
                         $blocks = parse_blocks($result->post_content);
                         
-                        $contains_PluginsPlugins40Q_v2 = false;
+                        $contains_PluginsAgency40Q_v2 = false;
                         foreach ($blocks as $block) {
                             if (!empty($block['blockName']) && strpos($block['blockName'], $this->block_prefix) !== false) {
-                                $contains_PluginsPlugins40Q_v2 = true;
+                                $contains_PluginsAgency40Q_v2 = true;
                                 break;
                             }
                         }
                         
-                        //  If the page contains blocks with "PluginsPlugins40Q-v2/" in its name, store it together with the blocks used.
-                        if ($contains_PluginsPlugins40Q_v2) {
+                        //  If the page contains blocks with "PluginsAgency40Q-v2/" in its name, store it together with the blocks used.
+                        if ($contains_PluginsAgency40Q_v2) {
                             $page_blocks = array();
                             foreach ($blocks as $block) {
                                 if (!empty($block['blockName'])) {
@@ -126,7 +134,7 @@ class BlockInventorySubPage
                         $filtered_blocks = array_filter($page_data['blocks'], function($block) {
                             return strpos($block, $this->block_prefix) !== false;
                         });
-                        // Only add to the results if there are blocks containing "PluginsPlugins40Q-v2/" in their name.
+                        // Only add to the results if there are blocks containing "PluginsAgency40Q-v2/" in their name.
                         if (!empty($filtered_blocks)) {
                             $filtered_results[] = array(
                                 'ID' => $page_id,

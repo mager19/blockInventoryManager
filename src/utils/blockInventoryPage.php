@@ -1,6 +1,6 @@
 <?php 
 
-namespace Plugins40Q\Blockinventory\utils;
+namespace Agency40Q\Blockinventory\utils;
 
 
 class BlockInventoryPage
@@ -14,7 +14,7 @@ class BlockInventoryPage
     public function add_plugin_page()
     {   
         $menu_slug = 'blockinventory-options';
-        add_menu_page('Blockinventory', 'Blockinventory', 'read', $menu_slug,  '', 'dashicons-welcome-widgets-menus');
+        add_menu_page('Blockinventory', 'Block Inventory', 'read', $menu_slug,  '', 'dashicons-welcome-widgets-menus');
 
         $subpage = new BlockInventorySubPage();
     }

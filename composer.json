@@ -2,12 +2,12 @@
 	"name": "commvaul/blockinventory",
 	"autoload": {
 		"psr-4": {
-			"Plugins40Q\\Blockinventory\\": "src/"
+			"Agency40Q\\Blockinventory\\": "src/"
 		}
 	},
 	"authors": [
 		{
-			"name": "Plugins40Q.agency"
+			"name": "Agency40Q.agency"
 		}
 	],
 	"config": {

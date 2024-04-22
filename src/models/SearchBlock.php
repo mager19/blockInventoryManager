@@ -1,6 +1,6 @@
 <?php
 
-namespace Plugins40Q\Blockinventory\models;
+namespace Agency40Q\Blockinventory\models;
 
 class SearchBlock
 {

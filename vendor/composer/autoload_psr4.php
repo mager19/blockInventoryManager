@@ -6,5 +6,5 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Plugins40Q\\Blockinventory\\' => array($baseDir . '/src'),
+    'Agency40Q\\Blockinventory\\' => array($baseDir . '/src'),
 );
