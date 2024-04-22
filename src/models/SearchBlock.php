@@ -18,13 +18,17 @@ class SearchBlock
         $custom_post_types[] = "post";
         $post_types_str = "'" . implode("', '", $custom_post_types) . "'";
 
+        if(strpos($block_to_find, "core/") !== false) {
+            $block_to_find = str_replace("core/", "", $block_to_find);
+        }
+
         $page_query = $wpdb->prepare(
-            "SELECT ID, post_title, post_content, post_status, post_author, 'page' AS post_type FROM {$wpdb->posts} WHERE post_type = 'page' AND post_content LIKE %s",
+            "SELECT ID, post_title, post_content, post_author, post_status, 'page' AS post_type FROM {$wpdb->posts} WHERE post_type = 'page' AND post_content LIKE %s",
             '%' . $wpdb->esc_like($block_to_find) . '%'
         );
         
         $post_query = $wpdb->prepare(
-            "SELECT ID, post_title, post_type, post_status, post_author, post_content FROM {$wpdb->posts} WHERE post_type IN ($post_types_str) AND post_status = 'publish' AND post_content LIKE %s",
+            "SELECT ID, post_title, post_type, post_content, post_author, post_status FROM {$wpdb->posts} WHERE post_type IN ($post_types_str) AND post_status = 'publish' AND post_content LIKE %s",
             '%' . $wpdb->esc_like($block_to_find) . '%'
         );
         
@@ -32,7 +36,7 @@ class SearchBlock
         $combined_query = "($page_query) UNION ($post_query)";
         
         $combined_results = $wpdb->get_results($combined_query);
-        
+
         foreach ($combined_results as $result) {
             if ($result->post_type === 'page') {
                 $post_type = 'page';
@@ -48,7 +52,7 @@ class SearchBlock
                 'title' => $result->post_title,
                 'post_type' => $post_type,
                 'post_status' => $result->post_status,
-                'post_author' => get_the_author_meta('display_name', $result->post_author)
+                'post_author' => get_the_author_meta('display_name', $result->post_author),
             ];
         }
 

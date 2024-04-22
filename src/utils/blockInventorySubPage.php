@@ -122,7 +122,7 @@ class BlockInventorySubPage
                                 'title' => $result->post_title,
                                 'blocks' => $page_blocks,
                                 'post_type' => $result->post_type,
-                                'post_status' => $result->post_status,
+                                'post_status' => $result->post_status ?? '',
                                 'post_author' => get_the_author_meta('display_name', $result->post_author)
                             );
                         }
@@ -202,7 +202,7 @@ class BlockInventorySubPage
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $selected_block = isset($_POST['blocks']) ? $_POST['blocks'] : null;
-                
+       
                 ?>
 
                 <h2><?php echo $selected_block; ?></h2>
