@@ -9,7 +9,7 @@
  * Author URI:        https://40Q.agency
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       BlockInventory
+ * Text Domain:       blockinventory
  */
 
 use Agency40Q\Blockinventory\utils\BlockInventoryPage;

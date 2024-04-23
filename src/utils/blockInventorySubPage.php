@@ -3,7 +3,6 @@
 namespace Agency40Q\Blockinventory\utils;
 
 use Agency40Q\Blockinventory\models\SearchBlock;
-use Agency40Q\Blockinventory\models\ShowResults;
 use Agency40Q\Blockinventory\utils\BlockInventorySettings;
 use Agency40Q\Blockinventory\utils\BlockInventoryListTable;
 
@@ -213,7 +212,6 @@ class BlockInventorySubPage
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $selected_block = isset($_POST['blocks']) ? $_POST['blocks'] : null;
-       
                 ?>
 
                 <h2><?php echo $selected_block; ?></h2>
@@ -235,7 +233,7 @@ class BlockInventorySubPage
                     
                     <?php 
                 }else {   
-                    echo esc_html__( "Not was found the block $selected_block in any page or cpt", 'Blockinventory' );            
+                    echo esc_html__( "Not was found the selected block in any page or cpt", 'Blockinventory' );            
                 }
             }
             ?>            
