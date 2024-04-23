@@ -1,7 +1,7 @@
 <?php 
 namespace Agency40Q\Blockinventory\utils;
 
-class blockInventorySettings {
+class BlockInventorySettings {
     
     public function __construct()
     {   

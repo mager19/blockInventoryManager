@@ -4,7 +4,8 @@ namespace Agency40Q\Blockinventory\utils;
 
 use Agency40Q\Blockinventory\models\SearchBlock;
 use Agency40Q\Blockinventory\models\ShowResults;
-use Agency40Q\Blockinventory\utils\blockInventorySettings;
+use Agency40Q\Blockinventory\utils\BlockInventorySettings;
+use Agency40Q\Blockinventory\utils\BlockInventoryListTable;
 
 class BlockInventorySubPage
 {   
@@ -12,7 +13,7 @@ class BlockInventorySubPage
 
     public function __construct()
     {   
-        $blockInventorySettings = new blockInventorySettings();
+        $blockInventorySettings = new BlockInventorySettings();
         $blockInventorySettings::registerSetting('block_prefix');
         $blockInventorySettings::registerSetting('transient_expiration');
 
@@ -38,6 +39,7 @@ class BlockInventorySubPage
 
     public function blockInventory_admin_options(){
         ?>
+
             <h1><?php echo esc_html__( 'Settings', 'Blockinventory' ); ?></h1>
             <form method="post" action="options.php">
                 <?php settings_fields( 'blockinventory-plugin-settings-group' ); ?>
@@ -69,7 +71,6 @@ class BlockInventorySubPage
 
     public function render_block_inventory_page()
     {   
-        $ui = new ShowResults();
 
         ?>
         <div class="wrap">
@@ -157,10 +158,17 @@ class BlockInventorySubPage
                     set_transient('blockInventory', $filtered_results, $transient_expiration);
                 }                
                 
-                $showResults = $ui->createTable($filtered_results, 'blocks');
+                $pages_table = new BlockInventoryListTable();
+                $pages_table->prepare_items($filtered_results);
+                ?>
 
-                echo $showResults;
-            ?>            
+                <form id="movies-filter" method="get">
+                    <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
+                    <?php 
+                    $pages_table->search_box('Search', 'search');
+                    $pages_table->display(); 
+                    ?>
+                </form>
         </div>        
         <?php        
     }
@@ -168,8 +176,6 @@ class BlockInventorySubPage
     public function extraOptionsCallback()
     {
         $search = new SearchBlock();
-        $ui = new ShowResults();
-
         ?>
         <div class="wrap">
 
@@ -210,9 +216,19 @@ class BlockInventorySubPage
                 $results = $search->search_block_in_content($selected_block);              
 
                 if (!empty($results)) {
-                    $showResults = $ui->createTable($results);
-                
-                    echo $showResults;
+                    
+                    $pages_table = new BlockInventoryListTable('blocks');
+                    $pages_table->prepare_items($results);
+                    ?>
+    
+                    <form id="movies-filter" method="get">
+                        <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
+                        <?php 
+                        $pages_table->display(); 
+                        ?>
+                    </form>
+                    
+                    <?php 
                 }else {   
                     echo esc_html__( "Not was found the block $selected_block in any page or cpt", 'Blockinventory' );            
                 }
@@ -221,4 +237,9 @@ class BlockInventorySubPage
         </div>
         <?php 
     }
-} ?>
+} 
+
+
+
+
+?>
