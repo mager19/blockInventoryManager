@@ -17,7 +17,7 @@ class BlockInventorySubPage
         $blockInventorySettings::registerSetting('block_prefix');
         $blockInventorySettings::registerSetting('transient_expiration');
 
-        $this->block_prefix = get_option('block_prefix');
+        
         $menu_slug = 'blockinventory-options';
         
         // Page Block Inventory
@@ -79,11 +79,10 @@ class BlockInventorySubPage
             <?php 
                 global $wpdb;
 
-                $ui = new ShowResults();
-
                 $filtered_results = get_transient('blockInventory');
                 
                 if ($filtered_results === false) {
+                    $this->block_prefix = get_option('block_prefix');
                     $custom_post_types = get_post_types(["_builtin" => false]);
                     $custom_post_types[] = "post";
                     $custom_post_types[] = "page";
