@@ -35,6 +35,12 @@ class BlockInventorySubPage
                 delete_transient('blockInventory');
             }
         }, 10, 2);
+
+        add_action('update_option_block_prefix', function($old_value, $value) {
+            if ($old_value !== $value) {
+                delete_transient('blockInventory');
+            }
+        }, 10, 2);
     }
 
     public function blockInventory_admin_options(){
