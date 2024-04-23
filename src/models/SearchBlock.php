@@ -51,7 +51,7 @@ class SearchBlock
                 'permalink' => $permalink,
                 'title' => $result->post_title,
                 'post_type' => $post_type,
-                'post_status' => $result->post_status,
+                'post_status' => get_post_status($result->ID),
                 'post_author' => get_the_author_meta('display_name', $result->post_author),
             ];
         }
