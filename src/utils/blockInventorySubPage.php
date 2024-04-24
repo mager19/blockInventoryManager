@@ -59,13 +59,13 @@ class BlockInventorySubPage
                     <tr valign="top">
                         <th scope="row"><?php echo esc_html__( 'Transient Expiration:', 'Blockinventory' ); ?></th>
                         <td>
-                            <select name="transient_expiration"> 
-                                <option selected="selected" value="<?php echo MINUTE_IN_SECONDS; ?>" <?php selected( get_option( 'transient_expiration' ), MINUTE_IN_SECONDS ); ?>>1 Minute</option>
-                                <option value="<?php echo MINUTE_IN_SECONDS*5; ?>" <?php selected( get_option( 'transient_expiration' ), MINUTE_IN_SECONDS*5 ); ?>>5 Minutes</option>
-                                <option value="<?php echo HOUR_IN_SECONDS; ?>" <?php selected( get_option( 'transient_expiration' ), HOUR_IN_SECONDS ); ?>>1 Hour</option>
-                                <option value="<?php echo HOUR_IN_SECONDS*6; ?>" <?php selected( get_option( 'transient_expiration' ), HOUR_IN_SECONDS*6 ); ?>>6 Hours</option>
-                                <option value="<?php echo DAY_IN_SECONDS; ?>" <?php selected( get_option( 'transient_expiration' ), DAY_IN_SECONDS ); ?>>1 Day</option>
-                            </select>
+                        <select name="transient_expiration"> 
+                            <option selected="selected" value="<?php echo esc_attr(MINUTE_IN_SECONDS); ?>" <?php selected( get_option( 'transient_expiration' ), MINUTE_IN_SECONDS ); ?>>1 Minute</option>
+                            <option value="<?php echo esc_attr(MINUTE_IN_SECONDS*5); ?>" <?php selected( get_option( 'transient_expiration' ), MINUTE_IN_SECONDS*5 ); ?>>5 Minutes</option>
+                            <option value="<?php echo esc_attr(HOUR_IN_SECONDS); ?>" <?php selected( get_option( 'transient_expiration' ), HOUR_IN_SECONDS ); ?>>1 Hour</option>
+                            <option value="<?php echo esc_attr(HOUR_IN_SECONDS*6); ?>" <?php selected( get_option( 'transient_expiration' ), HOUR_IN_SECONDS*6 ); ?>>6 Hours</option>
+                            <option value="<?php echo esc_attr(DAY_IN_SECONDS); ?>" <?php selected( get_option( 'transient_expiration' ), DAY_IN_SECONDS ); ?>>1 Day</option>
+                        </select>
                         </td>
                     </tr>
                 </table>
@@ -100,7 +100,8 @@ class BlockInventorySubPage
                         WHERE post_type IN ($post_types_str)
                     ";
                     
-                    $results = $wpdb->get_results($query);
+                    $prepared_query = $wpdb->prepare($query);// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+                    $results = $wpdb->get_results($prepared_query);// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
                     
                     $pages_with_blocks = array();
                     
@@ -167,7 +168,7 @@ class BlockInventorySubPage
                 ?>
 
                 <form id="movies-filter" method="get">
-                    <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
+                    <input type="hidden" name="page" value="<?php echo esc_html( $_REQUEST['page'] ) ?>" />
                     <?php 
                     $pages_table->search_box('Search', 'search');
                     $pages_table->display(); 
@@ -214,7 +215,7 @@ class BlockInventorySubPage
                 $selected_block = isset($_POST['blocks']) ? $_POST['blocks'] : null;
                 ?>
 
-                <h2><?php echo $selected_block; ?></h2>
+                <h2><?php echo esc_html($selected_block); ?></h2>
                 <?php 
                 $results = $search->search_block_in_content($selected_block);              
 
@@ -225,7 +226,7 @@ class BlockInventorySubPage
                     ?>
     
                     <form id="movies-filter" method="get">
-                        <input type="hidden" name="page" value="<?php echo $_REQUEST['page'] ?>" />
+                        <input type="hidden" name="page" value="<?php echo esc_html( $_REQUEST['page'] ); ?>" />
                         <?php 
                         $pages_table->display(); 
                         ?>

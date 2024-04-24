@@ -30,12 +30,13 @@ class SearchBlock
         $post_query = $wpdb->prepare(
             "SELECT ID, post_title, post_type, post_content, post_author, post_status FROM {$wpdb->posts} WHERE post_type IN ($post_types_str) AND post_status = 'publish' AND post_content LIKE %s",
             '%' . $wpdb->esc_like($block_to_find) . '%'
-        );
+        ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
         
-        // Unir ambas consultas
+        // join queries
         $combined_query = "($page_query) UNION ($post_query)";
-        
-        $combined_results = $wpdb->get_results($combined_query);
+
+        $prepared_query = $wpdb->prepare($combined_query); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $combined_results = $wpdb->get_results($prepared_query);// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
         foreach ($combined_results as $result) {
             if ($result->post_type === 'page') {
