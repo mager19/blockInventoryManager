@@ -13,8 +13,8 @@ class BlockInventorySubPage
     public function __construct()
     {   
         $blockInventorySettings = new BlockInventorySettings();
-        $blockInventorySettings::registerSetting('block_prefix');
-        $blockInventorySettings::registerSetting('transient_expiration');
+        $blockInventorySettings::registerSetting('40qblock_prefix');
+        $blockInventorySettings::registerSetting('40qtransient_expiration');
 
         
         $menu_slug = 'blockinventory-options';
@@ -29,22 +29,20 @@ class BlockInventorySubPage
         add_submenu_page( $menu_slug, 'Block Inventory Settings', 'Settings', 'manage_options', 'blockinventory_settings', array($this,'blockInventory_admin_options') ); 
 
         // Delete transient when the settings are updated
-        add_action('update_option_transient_expiration', function($old_value, $value) {
+        add_action('update_option_40qtransient_expiration', function($old_value, $value) {
             if ($old_value !== $value) {
                 delete_transient('blockInventory');
             }
         }, 10, 2);
 
-        add_action('update_option_block_prefix', function($old_value, $value) {
+        add_action('update_option_40qblock_prefix', function($old_value, $value) {
             if ($old_value !== $value) {
                 delete_transient('blockInventory');
             }
         }, 10, 2);
     }
 
-    public function blockInventory_admin_options(){
-        ?>
-
+    public function blockInventory_admin_options(){ ?>
             <h1><?php echo esc_html__( 'Settings', 'Blockinventory' ); ?></h1>
             <form method="post" action="options.php">
                 <?php settings_fields( 'blockinventory-plugin-settings-group' ); ?>
@@ -52,19 +50,19 @@ class BlockInventorySubPage
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row"><?php echo esc_html__( 'Block prefix:', 'Blockinventory' ); ?></th>
-                        <td><input type="text" name="block_prefix" value="<?php echo esc_attr( get_option( 'block_prefix' ) ); ?>"/></td>             
+                        <td><input type="text" name="40qblock_prefix" value="<?php echo esc_attr( get_option( '40qblock_prefix' ) ); ?>"/></td>             
                     </tr>
                     <tr valign="top">
                     <span><i><?php echo esc_html__( 'if no value is assigned, the default value "core/" will be used', 'Blockinventory' ); ?></i></span>
                     <tr valign="top">
                         <th scope="row"><?php echo esc_html__( 'Transient Expiration:', 'Blockinventory' ); ?></th>
                         <td>
-                        <select name="transient_expiration"> 
-                            <option selected="selected" value="<?php echo esc_attr(MINUTE_IN_SECONDS); ?>" <?php selected( get_option( 'transient_expiration' ), MINUTE_IN_SECONDS ); ?>>1 Minute</option>
-                            <option value="<?php echo esc_attr(MINUTE_IN_SECONDS*5); ?>" <?php selected( get_option( 'transient_expiration' ), MINUTE_IN_SECONDS*5 ); ?>>5 Minutes</option>
-                            <option value="<?php echo esc_attr(HOUR_IN_SECONDS); ?>" <?php selected( get_option( 'transient_expiration' ), HOUR_IN_SECONDS ); ?>>1 Hour</option>
-                            <option value="<?php echo esc_attr(HOUR_IN_SECONDS*6); ?>" <?php selected( get_option( 'transient_expiration' ), HOUR_IN_SECONDS*6 ); ?>>6 Hours</option>
-                            <option value="<?php echo esc_attr(DAY_IN_SECONDS); ?>" <?php selected( get_option( 'transient_expiration' ), DAY_IN_SECONDS ); ?>>1 Day</option>
+                        <select name="40qtransient_expiration"> 
+                            <option selected="selected" value="<?php echo esc_attr(MINUTE_IN_SECONDS); ?>" <?php selected( get_option( '40qtransient_expiration' ), MINUTE_IN_SECONDS ); ?>>1 Minute</option>
+                            <option value="<?php echo esc_attr(MINUTE_IN_SECONDS*5); ?>" <?php selected( get_option( '40qtransient_expiration' ), MINUTE_IN_SECONDS*5 ); ?>>5 Minutes</option>
+                            <option value="<?php echo esc_attr(HOUR_IN_SECONDS); ?>" <?php selected( get_option( '40qtransient_expiration' ), HOUR_IN_SECONDS ); ?>>1 Hour</option>
+                            <option value="<?php echo esc_attr(HOUR_IN_SECONDS*6); ?>" <?php selected( get_option( '40qtransient_expiration' ), HOUR_IN_SECONDS*6 ); ?>>6 Hours</option>
+                            <option value="<?php echo esc_attr(DAY_IN_SECONDS); ?>" <?php selected( get_option( '40qtransient_expiration' ), DAY_IN_SECONDS ); ?>>1 Day</option>
                         </select>
                         </td>
                     </tr>
@@ -74,10 +72,7 @@ class BlockInventorySubPage
         <?php 
     } 
 
-    public function render_block_inventory_page()
-    {   
-
-        ?>
+    public function render_block_inventory_page() {  ?>
         <div class="wrap">
             <h1><?php echo esc_html__( 'Block Inventory Pages', 'Blockinventory' ); ?> </h1>
             <p><?php echo esc_html__( 'The following table shows the pages, posts and cpts in which the prefix defined in settings has been used, if you have not done so it will show the default native blocks (core/blocks) and the other blocks on the site.', 'Blockinventory' );  ?>  </p>
@@ -87,7 +82,7 @@ class BlockInventorySubPage
                 $filtered_results = get_transient('blockInventory');
                 
                 if ($filtered_results === false) {
-                    $this->block_prefix = get_option('block_prefix');
+                    $this->block_prefix = get_option('40qblock_prefix');
                     $custom_post_types = get_post_types(["_builtin" => false]);
                     $custom_post_types[] = "post";
                     $custom_post_types[] = "page";
@@ -153,8 +148,8 @@ class BlockInventorySubPage
                         }
                     }
                     
-                    if(get_option('transient_expiration') !== false){
-                        $transient_expiration = get_option('transient_expiration');
+                    if(get_option('40qtransient_expiration') !== false){
+                        $transient_expiration = get_option('40qtransient_expiration');
                     }else{
                         $transient_expiration =  MINUTE_IN_SECONDS;
                     }
@@ -225,7 +220,7 @@ class BlockInventorySubPage
                     $pages_table->prepare_items($results);
                     ?>
     
-                    <form id="movies-filter" method="get">
+                    <form id="pages" method="get">
                         <input type="hidden" name="page" value="<?php echo esc_html( $_REQUEST['page'] ); ?>" />
                         <?php 
                         $pages_table->display(); 

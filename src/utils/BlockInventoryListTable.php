@@ -113,6 +113,12 @@ class BlockInventoryListTable extends WP_List_Table {
 			_x( 'View', 'List table row action', 'wp-list-table-example' )
 		);
 
+		$actions['edit'] = sprintf(
+			'<a href="%1$s" target="_blank">%2$s</a>',
+			esc_url( get_edit_post_link( $item['ID'] ) ),
+			_x( 'Edit', 'List table row action', 'wp-list-table-example' )
+		);
+
 		// Return the title contents.
 		return sprintf( '%1$s <span style="color:silver;">(id:%2$s)</span>%3$s',
 			$item['title'],
