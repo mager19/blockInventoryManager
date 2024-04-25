@@ -11,14 +11,15 @@ class BlockInventorySubPage
     protected $block_prefix;
 
     public function __construct()
-    {   
-        $blockInventorySettings = new BlockInventorySettings();
-        $blockInventorySettings::registerSetting('40qblock_prefix');
-        $blockInventorySettings::registerSetting('40qtransient_expiration');
+    {           
+        $this->addPages();
+        $this->BlockInventoryRegisterOptions();
+        $this->updateOptions();
+    }
 
-        
+    public function addPages(){
         $menu_slug = 'blockinventory-options';
-        
+
         // Page Block Inventory
         add_submenu_page($menu_slug, 'Blockinventory', 'Pages', 'read', $menu_slug, array($this, 'render_block_inventory_page'));
 
@@ -27,7 +28,9 @@ class BlockInventorySubPage
 
         // Page settings
         add_submenu_page( $menu_slug, 'Block Inventory Settings', 'Settings', 'manage_options', 'blockinventory_settings', array($this,'blockInventory_admin_options') ); 
+    }
 
+    private function updateOptions(){
         // Delete transient when the settings are updated
         add_action('update_option_40qtransient_expiration', function($old_value, $value) {
             if ($old_value !== $value) {
@@ -40,6 +43,12 @@ class BlockInventorySubPage
                 delete_transient('blockInventory');
             }
         }, 10, 2);
+    }
+
+    private function BlockInventoryRegisterOptions(){
+        $blockInventorySettings = new BlockInventorySettings();
+        $blockInventorySettings::registerSetting('40qblock_prefix');
+        $blockInventorySettings::registerSetting('40qtransient_expiration');
     }
 
     public function blockInventory_admin_options(){ ?>
@@ -156,19 +165,10 @@ class BlockInventorySubPage
 
                     //Save the transient
                     set_transient('blockInventory', $filtered_results, $transient_expiration);
-                }                
+                }            
                 
-                $pages_table = new BlockInventoryListTable();
-                $pages_table->prepare_items($filtered_results);
-                ?>
-
-                <form id="movies-filter" method="get">
-                    <input type="hidden" name="page" value="<?php echo esc_html( $_REQUEST['page'] ) ?>" />
-                    <?php 
-                    $pages_table->search_box('Search', 'search');
-                    $pages_table->display(); 
-                    ?>
-                </form>
+                $this->tableList($filtered_results);
+                ?>                
         </div>        
         <?php        
     }
@@ -176,6 +176,7 @@ class BlockInventorySubPage
     public function extraOptionsCallback()
     {
         $search = new SearchBlock();
+        $this->block_prefix = get_option('40qblock_prefix');
         ?>
         <div class="wrap">
 
@@ -207,7 +208,7 @@ class BlockInventorySubPage
             <?php 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-                $selected_block = isset($_POST['blocks']) ? $_POST['blocks'] : null;
+                $selected_block = isset($_POST['blocks']) ? $_POST['blocks'] : null; // phpcs:ignore WordPress.Security.NonceVerification.Missing
                 ?>
 
                 <h2><?php echo esc_html($selected_block); ?></h2>
@@ -221,7 +222,7 @@ class BlockInventorySubPage
                     ?>
     
                     <form id="pages" method="get">
-                        <input type="hidden" name="page" value="<?php echo esc_html( $_REQUEST['page'] ); ?>" />
+                        <input type="hidden" name="page" value="<?php echo esc_html( $_REQUEST['page'] ); // phpcs:ignore WordPress.Security. NonceVerification.Missing ?>" /> 
                         <?php 
                         $pages_table->display(); 
                         ?>
@@ -236,9 +237,19 @@ class BlockInventorySubPage
         </div>
         <?php 
     }
+
+    private function tableList($filtered_results) { 
+        $pages_table = new BlockInventoryListTable();
+        $pages_table->prepare_items($filtered_results);        
+    ?>    
+        <form id="pages-filter" method="get">
+            <input type="hidden" name="page" value="<?php echo esc_html( $_REQUEST['page'] ) // phpcs:ignore WordPress.Security.NonceVerification.Missing ?>" />
+            <?php 
+            $pages_table->search_box('Search', 'search');
+            $pages_table->display(); 
+            ?>
+        </form>
+    <?php 
+    }
 } 
-
-
-
-
 ?>
