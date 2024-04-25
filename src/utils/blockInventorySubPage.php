@@ -179,7 +179,6 @@ class BlockInventorySubPage
         $this->block_prefix = get_option('40qblock_prefix');
         ?>
         <div class="wrap">
-
             <h1><?php echo esc_html__( 'Block Inventory', 'Blockinventory' ); ?></h1>
             <p><?php echo esc_html__( 'Select a block and get the information of all the pages/cpt where it was used.', 'Blockinventory' ); ?></p>
 
