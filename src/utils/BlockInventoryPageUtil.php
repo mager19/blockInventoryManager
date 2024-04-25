@@ -3,7 +3,7 @@
 namespace Agency40Q\Blockinventory\utils;
 
 
-class BlockInventoryPage
+class BlockInventoryPageUtil
 {   
     protected $icon_url;
     public function __construct()
@@ -17,7 +17,7 @@ class BlockInventoryPage
         $menu_slug = 'blockinventory-options';
         add_menu_page('Blockinventory', 'Block Inventory', 'read', $menu_slug,  '', $this->icon_url);
 
-        $subpage = new BlockInventorySubPage();
+        new BlockInventorySubPageUtil();
     }
 }
 ?>

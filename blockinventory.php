@@ -13,7 +13,7 @@
  */
 
 require 'plugin-update-checker/plugin-update-checker.php';
-use Agency40Q\Blockinventory\utils\BlockInventoryPage;
+use Agency40Q\Blockinventory\utils\BlockInventoryPageUtil;
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 if (! defined('ABSPATH') ) {
@@ -32,7 +32,7 @@ if(!class_exists('BlockInventory')) {
 
         public function init()
         {            
-            new BlockInventoryPage();
+            new BlockInventoryPageUtil();
             $this->updateChecker();
             register_deactivation_hook( __FILE__, array($this,'blockInventoryDeactive') );
             add_action('admin_enqueue_scripts', array($this, 'blockInventoryEnqueue'));

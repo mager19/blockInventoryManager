@@ -6,7 +6,7 @@ use Agency40Q\Blockinventory\models\SearchBlock;
 use Agency40Q\Blockinventory\utils\BlockInventorySettings;
 use Agency40Q\Blockinventory\utils\BlockInventoryListTable;
 
-class BlockInventorySubPage
+class BlockInventorySubPageUtil
 {   
     protected $block_prefix;
 
