@@ -19,7 +19,6 @@ if (! defined('ABSPATH') ) {
 }
 
 if(!class_exists('BlockInventory')) {
-    
     final class BlockInventory
     {
 
@@ -34,7 +33,17 @@ if(!class_exists('BlockInventory')) {
         public function init()
         {            
             new BlockInventoryPage();
+
+            register_deactivation_hook( __FILE__, array($this,'blockInventoryDeactive') );
         }      
+
+        public function blockInventoryDeactive() {
+            $blockInventoryOptions = array('40qtransient_expiration', '40qblock_prefix' );
+            
+            foreach($blockInventoryOptions as $option) {
+                delete_option( $option );
+            }
+        }
     }
 }
 
