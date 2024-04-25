@@ -4,7 +4,7 @@
  * Description:       A plugin of custom blocks by 40Q.
  * Requires at least: 6.1
  * Requires PHP:      7.0
- * Version:           0.1.0
+ * Version:           0.1.1
  * Author:            40Q
  * Author URI:        https://40Q.agency
  * License:           GPL-2.0-or-later
@@ -25,10 +25,8 @@ if(!class_exists('BlockInventory')) {
     {
 
         public function __construct()
-        {   
-            
+        {               
             include_once "vendor/autoload.php";
-
             $this->init();
         }
 
@@ -37,6 +35,7 @@ if(!class_exists('BlockInventory')) {
             new BlockInventoryPage();
             $this->updateChecker();
             register_deactivation_hook( __FILE__, array($this,'blockInventoryDeactive') );
+            add_action('admin_enqueue_scripts', array($this, 'blockInventoryEnqueue'));
         }      
 
         public function blockInventoryDeactive() {
@@ -56,6 +55,10 @@ if(!class_exists('BlockInventory')) {
 
             //Set the branch that contains the stable release.
             $myUpdateChecker->setBranch('releases');
+        }
+
+        public function blockInventoryEnqueue(){
+            wp_enqueue_style('blockinventory-style', plugin_dir_url(__FILE__) . 'src/css/blockinventory.css', array(), '1.0.0', 'all');
         }
     }
 }
