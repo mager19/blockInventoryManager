@@ -12,7 +12,9 @@
  * Text Domain:       blockinventory
  */
 
+require 'plugin-update-checker/plugin-update-checker.php';
 use Agency40Q\Blockinventory\utils\BlockInventoryPage;
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 if (! defined('ABSPATH') ) {
     die('Silence is golden.');
@@ -33,7 +35,7 @@ if(!class_exists('BlockInventory')) {
         public function init()
         {            
             new BlockInventoryPage();
-
+            $this->updateChecker();
             register_deactivation_hook( __FILE__, array($this,'blockInventoryDeactive') );
         }      
 
@@ -43,6 +45,17 @@ if(!class_exists('BlockInventory')) {
             foreach($blockInventoryOptions as $option) {
                 delete_option( $option );
             }
+        }
+
+        public function updateChecker(){
+            $myUpdateChecker = PucFactory::buildUpdateChecker(
+                'https://github.com/mager19/blockInventoryManager/',
+                __FILE__,
+                'BlockInventory'
+            );
+
+            //Set the branch that contains the stable release.
+            $myUpdateChecker->setBranch('releases');
         }
     }
 }
